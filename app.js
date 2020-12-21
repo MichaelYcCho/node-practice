@@ -3,6 +3,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import { localsMiddleware } from "./middlewares";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
@@ -23,6 +24,7 @@ app.use(morgan("dev"));
  어플리케이션에서 발생하는 모든것을 로깅(logging) 함
 */
 
+app.use(localsMiddleware);
 
 // 라우터영역
 app.use(routes.home, globalRouter);
