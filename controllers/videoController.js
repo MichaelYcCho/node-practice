@@ -1,6 +1,7 @@
-//res.render("템플릿파일이름");  -> 확장자가 pug인 템플릿파일명을 찾아 보여줌 
-
-export const home = (req, res) => res.render("home", { pageTitle: "Home" });
+import { videos } from "../db";
+export const home = (req, res) => {
+    res.render("home", { pageTitle: "Home", videos });
+};
 
 export const search = (req, res) => {
     const {

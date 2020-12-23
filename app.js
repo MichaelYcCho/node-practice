@@ -14,6 +14,10 @@ app.set("view engine", "pug");
 
 // 미들웨어영역
 app.use(helmet()); // 보안강화를 위해 미들웨어에 같이 쓰임
+app.use(function (req, res, next) {
+    res.setHeader("Content-Security-Policy", "script-src 'self' https://archive.org");
+    return next();
+});
 app.use(cookieParser()); // 쿠키를 전달받아서 사용할수 있도록 하는 미들웨어 사용자인증시 필요
 app.use(bodyParser.json()); // 사용자가 웹사이트로 전달하는 정보들을 검사함  request정보에서 form이나 json형태로된 body를 검사함
 app.use(bodyParser.urlencoded({ extended: true }));
