@@ -13,6 +13,7 @@ const app = express();
 app.set("view engine", "pug");
 
 app.use("/uploads", express.static("uploads"));
+app.use("/static", express.static("static"));
 
 // 미들웨어영역
 app.use(helmet()); // 보안강화를 위해 미들웨어에 같이 쓰임
