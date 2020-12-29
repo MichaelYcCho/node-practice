@@ -3,11 +3,15 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import passport from "passport";
 import { localsMiddleware } from "./middlewares";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
 import routes from "./routes";
+
+import "./passport";
+
 const app = express();
 
 app.set("view engine", "pug");
@@ -25,6 +29,8 @@ app.use(cookieParser()); // 쿠키를 전달받아서 사용할수 있도록 하
 app.use(bodyParser.json()); // 사용자가 웹사이트로 전달하는 정보들을 검사함  request정보에서 form이나 json형태로된 body를 검사함
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(passport.initialize());
+app.use(passport.session());
 /*
  morgan
  tiny -어떤접속(get)인지, 어디서 접속했는지 알수 있음 / combine - 어떤종류의 브라우저인지, 어떤종류의 접속인지 알 수 있음
