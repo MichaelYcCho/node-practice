@@ -5,6 +5,8 @@ const port = process.env.PORT || 4000
 const bodyParser = require('body-parser');
 const { User } = require("./models/User");
 
+const config = require('./config/key');
+
 //application/x-www-form-urlencoded 데이터를 분석해서 가져옴
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -15,7 +17,7 @@ dotenv.config()
 
 
 const mongoose = require('mongoose')
-mongoose.connect(`mongodb+srv://michael:${process.env.DB_Password}@cluster0.donh0.mongodb.net/<dbname>?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://michael:${config.DB_Password}@cluster0.donh0.mongodb.net/<dbname>?retryWrites=true&w=majority`, {
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then(() => console.log('MongoDB Connected Success!'))
     .catch(err => console.log(err))
