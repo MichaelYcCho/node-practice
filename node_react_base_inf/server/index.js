@@ -28,6 +28,10 @@ mongoose.connect(`mongodb+srv://michael:${config.DB_Password}@cluster0.donh0.mon
 
 app.get('/', (req, res) => res.send('Hello World!~~안녕하세요 ~ '))
 
+app.get('/api/hello', (req, res) => {
+    res.send("axios test")
+})
+
 app.post('/api/users/register', (req, res) => {
 
     // client에서 회원가입(User model)정보를 받아 db에 넣는다
