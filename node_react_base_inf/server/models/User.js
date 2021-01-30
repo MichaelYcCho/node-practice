@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10
 const jwt = require('jsonwebtoken');
 
+
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -70,15 +71,13 @@ userSchema.methods.generateToken = function (cb) {
     //jwt 생성
 
     var token = jwt.sign(user._id.toHexString(), 'secretToken')
-    console.log(token)
-
     //user._id + secretToekn으로 token 생성됨
     //이떄 secretToken을 넣으면 _id가 나타나는 방식
 
     user.token = token
     user.save(function (err, user) {
-        if (err) return cb(err);
-        cb(null, user);
+        if (err) return cb(err)
+        cb(null, user)
     })
 }
 
@@ -87,19 +86,18 @@ userSchema.statics.findByToken = function (token, cb) {
 
     //토큰의 decode
 
-    jwt.verify(token, 'secretToken', function (err, decode) {
+    jwt.verify(token, 'secretToken', function (err, decoded) {
 
         // 유저 아이디를 이용하여 유저를 찾은 후 
         // 클라이언트에서 가져온 token과 db에 보관된 토큰이 일치하는지 확인
 
-        user.findOne({ "_id": decode, "token": token }, function (err, user) {
+        user.findOne({ "_id": decoded, "token": token }, function (err, user) {
             if (err) return cb(err);
             cb(null, user)
         })
-
     })
-
 }
 
 const User = mongoose.model('User', userSchema)
+
 module.exports = { User }
