@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Dropzone from 'react-dropzone'
 import {
     EditOutlined,
@@ -8,6 +8,8 @@ import axios from 'axios';
 
 function FileUpload() {
 
+    const [Images, setImages] = useState([])
+
     const dropHandler = (files) => {
 
         let formData = new FormData();
@@ -16,12 +18,12 @@ function FileUpload() {
             header: { 'content-type': 'multipart/fomr-data' }
         }
 
-        FormData.append("file", files[0])
+        formData.append("file", files[0])
 
         axios.post('/api/product/image', formData, config)
             .then(response => {
                 if (response.data.success) {
-
+                    setImages([...Images, response.data.filePath])
                 } else {
                     alert('파일 저장 실패')
                 }
@@ -44,6 +46,19 @@ function FileUpload() {
                     </div>
                 )}
             </Dropzone>
+
+            <div style={{ display: 'flex', width: '350px', height: '240px', overflowX: 'scroll' }}>
+
+                {Images.map((image, index) => (
+                    <div key={index}>
+                        <img style={{ minWidth: '300px', width: '300px', height: '240px' }}
+                            src={`http://localhost:5000/${image}`}
+                        />
+                    </div>
+                ))}
+
+
+            </div>
         </div>
     )
 }
