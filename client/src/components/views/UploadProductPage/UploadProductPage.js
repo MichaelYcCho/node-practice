@@ -55,7 +55,7 @@ function UploadProductPage(props) {
             <Form onSubmit={submitHandler}>
                 {/* DropZone */}
 
-                <FileUpload />
+                <FileUpload refreshFunction={updateImages} />
 
                 <br />
                 <br />
