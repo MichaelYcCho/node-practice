@@ -1,0 +1,26 @@
+{
+  "name": "nstagram-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michael-cho77/nstagram-backend.git"
+  },
+  "author": "michael",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michael-cho77/nstagram-backend/issues"
+  },
+  "homepage": "https://github.com/michael-cho77/nstagram-backend#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "apollo-server": "^2.21.0",
+    "graphql": "^15.5.0"
+  }
+}
