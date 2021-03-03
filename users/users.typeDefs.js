@@ -21,6 +21,6 @@ type Mutation{
     ):User
 }
     type Query{
-        seeProfile(username: String): User
+        seeProfile(username: String!): User
     }
 `
