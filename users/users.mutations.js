@@ -36,13 +36,25 @@ export default {
                 console.log(e)
 
             }
-
-            //hash password
-            //save and return the user
-
         },
-    }
-}
+        login: async (_, { username, password }) => {
+            const user = await client.user.findFirst({ where: { username } });
+            if (!user) {
+                return {
+                    ok: false,
+                    error: "User not Found",
+                };
+            }
+            const passwordOk = await bcrypt.compare(password, user.password)
+            if (!passwordOk) {
+                return {
+                    ok: false,
+                    error: "Incorrect password",
+                }
+            }
+        },
+    },
+};
 
 /* 또는 or을 사용해 아래처럼 구현가능
 const existingUser = await client.user.findFirst({
