@@ -27,6 +27,7 @@ type Mutation{
     ):User
 
     login(username:String!, password:String!): LoginResult!
+    
 }
     type Query{
         seeProfile(username: String!): User
