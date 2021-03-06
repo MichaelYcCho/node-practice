@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import client from "../client"
 
 export default {
@@ -52,20 +53,12 @@ export default {
                     error: "Incorrect password",
                 }
             }
+            const token = await jwt.sign({ id: user.id }, process.env.SECRET_KEY)
+            return {
+                ok: true,
+                token: token
+            }
         },
     },
 };
 
-/* 또는 or을 사용해 아래처럼 구현가능
-const existingUser = await client.user.findFirst({
-    where: {
-        OR: [
-            { username, },
-            { email, }
-        ]
-    }
-});
-if (existingUser) {
-    throw new Error("This username/email is already taken")
-}
-*/
