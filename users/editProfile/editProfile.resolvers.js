@@ -7,9 +7,14 @@ export default {
         editProfile: async (
             _,
             { firstName, lastName, username, email, password: newPassword },
-            { loggedInUser }
+            { loggedInUser, protectResolver }
         ) => {
-            console.log({ loggedInUser })
+            if (!loggedInUser) {
+                return {
+                    ok: false,
+                    error: 'You need to Login'
+                }
+            }
             let uglyPassword = null;
             if (newPassword) {
                 uglyPassword = await bcrypt.hash(newPassword, 10)
