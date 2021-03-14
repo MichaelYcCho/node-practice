@@ -16,3 +16,14 @@ const server = new ApolloServer({
 const PORT = process.env.PORT
 
 server.listen(PORT).then(() => console.log(`http://localhost:${PORT}`));
+
+
+const x = (resolver) => (root, args, context, info) => {
+    if (!context.loggedInUser) {
+        return {
+            ok: false,
+            error: "log in plz"
+        }
+    }
+    return resolver(root, args, contxt, info);
+}
