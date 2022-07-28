@@ -1,0 +1,37 @@
+{
+  "name": "nstagram-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec babel-node server",
+    "migrate": "npx prisma migrate dev --preview-feature",
+    "studio": "npx prisma studio"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michael-cho77/nstagram-backend.git"
+  },
+  "author": "michael",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michael-cho77/nstagram-backend/issues"
+  },
+  "homepage": "https://github.com/michael-cho77/nstagram-backend#readme",
+  "devDependencies": {
+    "@babel/core": "^7.13.1",
+    "@babel/node": "^7.13.0",
+    "@babel/preset-env": "^7.13.5",
+    "nodemon": "^2.0.7",
+    "prisma": "^2.17.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^2.17.0",
+    "apollo-server": "^2.21.0",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "graphql": "^15.5.0",
+    "graphql-tools": "^7.0.4",
+    "jsonwebtoken": "^8.5.1"
+  }
+}
