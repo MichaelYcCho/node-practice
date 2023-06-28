@@ -11,6 +11,13 @@ const hobbies = ['Sports', 'Cooking'];
 const copiedArray = [...hobbies]; // spread operator
 console.log(copiedArray); // [ 'Sports', 'Cooking' ]
 
+// 여러개의 인자를 전달하게 되면 이 함수는 이 모든 인자들을 배열로 모아준다. 그래서 return args;를 통해 이 배열을 반환할수 있게된다
+const toArray = (...args) => { // rest operator
+    return args;
+};
+
+console.log(toArray(1,2,3,4)); // [ 1, 2, 3, 4 ]
+
 
 // for (let hobby of hobbies){ // python 의 for in 과 비슷
 //     console.log(hobby);
