@@ -6,7 +6,28 @@ const person = {
     }
 };
 
+
+const printName = (personData) => {
+    console.log(personData.name);
+}
+
+printName(person); // John
+
+const printName2 = ({name}) => { // object destructuring
+    console.log(name);
+}
+
+printName2(person); // John
+
+const {name, age} = person; // object destructuring
+console.log(name, age); // John 20
+
+
 const hobbies = ['Sports', 'Cooking']; 
+const [hobby1, hobby2] = hobbies; // array destructuring
+console.log(hobby1, hobby2); // Sports Cooking
+
+
 
 const copiedArray = [...hobbies]; // spread operator
 console.log(copiedArray); // [ 'Sports', 'Cooking' ]
