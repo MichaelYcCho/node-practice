@@ -31,6 +31,16 @@ sequelize
   .sync({ force: true }) // 기존 테이블을 삭제하고 새로 생성 (true)
   .then(result => {
     // console.log(result);
+    return User.findByPk(1);
+  })
+  .then(user => {
+    if (!user){
+      return User.create({ name: 'Max', email: 'test@test.com' });
+    }
+    return Promise.resolve(user);
+  })
+  .then(user => {
+    console.log(user);
     app.listen(3000);
   })
   .catch(err => {
