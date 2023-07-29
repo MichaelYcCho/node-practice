@@ -28,7 +28,7 @@ Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
 
 sequelize
-  .sync({ force: true })
+  .sync({ force: true }) // 기존 테이블을 삭제하고 새로 생성 (true)
   .then(result => {
     // console.log(result);
     app.listen(3000);
