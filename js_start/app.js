@@ -34,8 +34,9 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
+User.hasMany(Product); // A User can have many posts
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });  // A Post is related to a User
+
 
 sequelize
   .sync({ force: true }) // 기존 테이블을 삭제하고 새로 생성 (true)
