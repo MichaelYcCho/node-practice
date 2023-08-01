@@ -7,6 +7,9 @@ const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+
 
 const app = express();
 
@@ -36,6 +39,9 @@ app.use(errorController.get404);
 
 User.hasMany(Product); // A User can have many posts
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });  // A Post is related to a User
+Cart.belongsToMany(Product, { through: CartItem });
+Cart.belongsTo(User);
+Product.belongsToMany(Cart, { through: CartItem });
 
 
 sequelize
