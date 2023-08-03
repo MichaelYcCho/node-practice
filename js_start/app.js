@@ -37,10 +37,11 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' }); // A Post is related to a User
 User.hasMany(Product); // A User can have many posts
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });  // A Post is related to a User
-Cart.belongsToMany(Product, { through: CartItem });
+User.hasOne(Cart);
 Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
 
@@ -55,6 +56,10 @@ sequelize
       return User.create({ name: 'Max', email: 'test@test.com' });
     }
     return Promise.resolve(user);
+  })
+  .then(user => {
+    // console.log(user);
+    return user.createCart();
   })
   .then(user => {
     console.log(user);
