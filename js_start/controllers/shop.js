@@ -93,7 +93,7 @@ exports.postCart = (req, res, next) => {
       return Product.findByPk(prodId);
     })
     .then(product => {
-      return fetchedCart.addProduct(product, {
+      return fetchedCart.addProduct(product, { // addProduct는 sequelize에서 제공하는 메소드(many to many 관계에서 사용)
         through: { quantity: newQuantity }
       });
     })
