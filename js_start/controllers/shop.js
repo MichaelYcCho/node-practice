@@ -94,7 +94,7 @@ exports.postCart = (req, res, next) => {
     })
     .then(product => {
       return fetchedCart.addProduct(product, { // addProduct는 sequelize에서 제공하는 메소드(many to many 관계에서 사용)
-        through: { quantity: newQuantity } // through를 통해 중개 테이블에 데이터를 추가할 수 있다.(quantity를 추가)
+        through: { quantity: newQuantity } // through를 통해 중개 테이블에 데이터를 추가할 수 있다.(quantity를 추가, 이미 존재하면 update)
       });
     })
     .then(() => {
