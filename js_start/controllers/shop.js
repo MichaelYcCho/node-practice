@@ -112,7 +112,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
     })
     .then(products => {
       const product = products[0];
-      return product.cartItem.destroy();
+      return product.cartItem.destroy(); // 중개 테이블에서 데이터를 삭제
     })
     .then(result => {
       res.redirect('/cart');
