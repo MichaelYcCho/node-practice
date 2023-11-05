@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+// app.controller.ts
+import { Controller, Get, Query } from '@nestjs/common';
 import { WebsocketClientService } from './web-sockets/websocket-client.service';
 
 @Controller()
@@ -7,10 +8,20 @@ export class AppController {
     private readonly websocketClientService: WebsocketClientService,
   ) {}
 
-  @Get('send-message')
-  sendMessage(): string {
-    const message = 'Hello from NestJS client!';
-    this.websocketClientService.sendMessage(message);
-    return 'Message sent to the WebSocket server';
+  @Get('connect-and-send-message')
+  async connectAndSendMessage(
+    @Query('message') message: string,
+  ): Promise<string> {
+    try {
+      await this.websocketClientService.connectToWebSocketServer(
+        'ws://localhost:8765',
+      );
+      await this.websocketClientService.sendMessage(message);
+      this.websocketClientService.disconnectFromWebSocketServer();
+      return 'Message sent to the WebSocket server';
+    } catch (error) {
+      console.error(error);
+      return 'Failed to send message';
+    }
   }
 }
