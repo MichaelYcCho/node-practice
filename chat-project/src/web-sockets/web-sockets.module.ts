@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { WsGateway } from 'src/ws/ws.gateway';
+import { WebsocketClientService } from './websocket-client.service';
 
 @Module({
-  providers: [WsGateway], // 여기에 게이트웨이를 추가
+  providers: [WebsocketClientService],
+  exports: [WebsocketClientService],
 })
 export class WebSocketsModule {}
