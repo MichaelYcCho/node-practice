@@ -13,12 +13,7 @@ console.log('하', process.env.DB_CLIENT);
 
 module.exports = {
 
-  // development: {
-  //   client: 'sqlite3',
-  //   connection: {
-  //     filename: './dev.sqlite3'
-  //   }
-  // },
+
 
 
     client: process.env.DB_CLIENT,
@@ -38,6 +33,7 @@ module.exports = {
       tableName: 'knex_migrations'
     }
   }
+
 
   // staging: {
   //   client: 'postgresql',

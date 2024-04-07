@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/app.ts",
-    "knex:migrate:make": "knex --knexfile knexfile.ts -x ts migrate:make",
+    "knex:migrate:make": "knex --knexfile knexfile.ts migrate:make",
     "knex:migrate:latest": "knex --knexfile knexfile.ts migrate:latest",
     "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback"
   },
