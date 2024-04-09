@@ -5,17 +5,16 @@
  */
 
 
-require('dotenv').config({path: './.env'});
+require('dotenv').config({path: '../.env'});
 
-console.log('하', process.env.DB_CLIENT);
+//console.log('Clinet', process.env.DB_CLIENT);
 
 
 
 module.exports = {
 
-
-
-
+// 하단이 있으면 clinet를 못찾는 에러 발생
+// development: {
     client: process.env.DB_CLIENT,
     connection: {
       host: process.env.DB_HOST,
@@ -29,11 +28,11 @@ module.exports = {
       max: 10
     },
     migrations: {
-      directory: './src/migrations',
+      directory: './migrations',
       tableName: 'knex_migrations'
     }
   }
-
+//};
 
   // staging: {
   //   client: 'postgresql',
