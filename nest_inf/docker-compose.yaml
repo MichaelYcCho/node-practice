@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always # 실행을 할때마다 항상 재시작
+    volumes:
+      #도커 이미지가 종료되어도 데이터를 보존하기 위해 사용, 현재 위치 : 도커 이미지 위치
+      - ./postgres-data:/var/lib/postgresql/data 
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
