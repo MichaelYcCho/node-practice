@@ -13,7 +13,7 @@ import { UserModel } from './entity/user.entity';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      database: 'postgres',
+      database: 'boilerplate',
       entities: [UserModel],
       synchronize: true,
     }),

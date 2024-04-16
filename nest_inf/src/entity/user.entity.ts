@@ -3,10 +3,18 @@ import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn, Up
 @Entity()
 export class UserModel{
 
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({
+        type: "text",
+        name: "title",
+        nullable: true,
+        // true로 설정하면 처음 저장할때만 값지정 가능, 이후에는 변경 불가능
+        update: false,
+        default: 'default value',
+        unique: false
+    })
     title: string;
 
     @CreateDateColumn()
