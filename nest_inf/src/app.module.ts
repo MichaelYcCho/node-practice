@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModel } from './entity/user.entity';
 import { Student, Teacher } from './entity/person.entity';
+import { BookModel, CarModel, SingleBaseModel } from './entity/inheritance.entity';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { Student, Teacher } from './entity/person.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'boilerplate',
-      entities: [UserModel, Student, Teacher],
+      entities: [UserModel, Student, Teacher, BookModel, CarModel, SingleBaseModel],
       synchronize: true,
     }),
   ],
