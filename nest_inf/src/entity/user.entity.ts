@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
+import { ProfileModel } from "src/profile.entity";
+import { Column, CreateDateColumn, Entity, Generated, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
 
-enum Role{
+export enum Role{
     USER = 'user',
     ADMIN = 'admin',
 }
@@ -11,16 +12,19 @@ export class UserModel{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({
-        type: "text",
-        name: "title",
-        nullable: true,
-        // true로 설정하면 처음 저장할때만 값지정 가능, 이후에는 변경 불가능
-        update: false,
-        default: 'default value',
-        unique: false
-    })
-    title: string;
+    @Column()
+    email: string; 
+
+    // @Column({
+    //     type: "text",
+    //     name: "title",
+    //     nullable: true,
+    //     // true로 설정하면 처음 저장할때만 값지정 가능, 이후에는 변경 불가능
+    //     update: false,
+    //     default: 'default value',
+    //     unique: false
+    // })
+    // title: string;
 
     @Column({
         type:"enum",
@@ -43,5 +47,8 @@ export class UserModel{
     @Column()
     @Generated("uuid")
     additionalId: string;
+
+    @OneToOne(() => ProfileModel, profile => profile.user)
+    profile: ProfileModel;
 
 }
