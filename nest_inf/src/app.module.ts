@@ -6,10 +6,11 @@ import { UserModel } from './entity/user.entity';
 import { Student, Teacher } from './entity/person.entity';
 import { BookModel, CarModel, SingleBaseModel } from './entity/inheritance.entity';
 import { ProfileModel } from './profile.entity';
+import { PostModel } from './entity/post.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserModel, ProfileModel]),
+    TypeOrmModule.forFeature([UserModel, ProfileModel, PostModel]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -17,7 +18,7 @@ import { ProfileModel } from './profile.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'boilerplate',
-      entities: [UserModel, Student, Teacher, BookModel, CarModel, SingleBaseModel, ProfileModel],
+      entities: [UserModel, Student, Teacher, BookModel, CarModel, SingleBaseModel, ProfileModel, PostModel],
       synchronize: true,
     }),
   ],
