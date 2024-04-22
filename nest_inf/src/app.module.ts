@@ -7,10 +7,11 @@ import { Student, Teacher } from './entity/person.entity';
 import { BookModel, CarModel, SingleBaseModel } from './entity/inheritance.entity';
 import { ProfileModel } from './profile.entity';
 import { PostModel } from './entity/post.entity';
+import { TagModel } from './entity/tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserModel, ProfileModel, PostModel]),
+    TypeOrmModule.forFeature([UserModel, ProfileModel, PostModel, TagModel]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -18,7 +19,7 @@ import { PostModel } from './entity/post.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'boilerplate',
-      entities: [UserModel, Student, Teacher, BookModel, CarModel, SingleBaseModel, ProfileModel, PostModel],
+      entities: [UserModel, Student, Teacher, BookModel, CarModel, SingleBaseModel, ProfileModel, PostModel, TagModel],
       synchronize: true,
     }),
   ],
