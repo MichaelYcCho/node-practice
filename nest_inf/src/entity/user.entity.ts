@@ -49,7 +49,16 @@ export class UserModel{
     @Generated("uuid")
     additionalId: string;
 
-    @OneToOne(() => ProfileModel, profile => profile.user)
+    @OneToOne(() => ProfileModel, profile => profile.user, {
+        // eager: true 설정시 user를 불러올때 profile도 같이 불러온다
+        eager: true,
+        // cascade: true 설정시 user를 저장할때 profile도 같이 저장한다
+        cascade: true,
+        
+        nullable: true,
+        onDelete: 'CASCADE',
+
+    })
     @JoinColumn()
     profile: ProfileModel;
 

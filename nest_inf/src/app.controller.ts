@@ -57,15 +57,21 @@ export class AppController {
   async createUserAndProfile(){
     const user = await  this.userRepository.save({
       email: 'test@nasdfasd.com',
+      profile:{
+        profileImg: 'test',
+      }
     });
 
-    const profile = await this.profileRepository.save({
-      profileImg: 'test',
-      user: user,
-    });
+      //   const profile = await this.profileRepository.save({
+  //     profileImg: 'test',
+  //     user: user,
+  //   });
 
-    return user;
+  //   return user;
+  // }
   }
+
+
 
 
   @Post('user/post')
