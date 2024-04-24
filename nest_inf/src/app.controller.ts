@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entity/user.entity';
 import { ProfileModel } from './profile.entity';
@@ -30,22 +30,26 @@ export class AppController {
   @Get('users')
   async getUsers() {
     return await this.userRepository.find({
-
-
-      // select: ['id', 'email'] 이렇게 특정 컬럼만 가져올 수도 있다, default는 모든 컬럼
-      select:{profile:{
-        id: true,
-      }},
-
-      // where: {id: 1} 이렇게 특정 조건을 줄 수도 있다
-      where:{},
-      relations: {
-        profile: true,
-      },
-      order:{
-        id: 'ASC',
-        },
-        take: 10,
+      where:{
+        //  아닌 경우 가져오기
+        //id: Not(1),
+        //적은경우 가져오기
+        //id: LessThan(30),
+        //적은경우 or 같은경우
+        //id: LessThanOrEqual(30),
+        // 많은경우
+        //id: MoreThan(30),
+        // 많은경우 or 같은경우
+        //id: MoreThanOrEqual(30),
+        // 같은경우
+        //id: Equal(30),
+        // Like검색
+        //email: Like('%@gmail%'),
+        // In 검색
+        //id: In([1, 2, 3]),
+        // IsNull 검색
+        //email: IsNull(),
+      }
     });
   }
 
