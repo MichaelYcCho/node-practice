@@ -30,9 +30,22 @@ export class AppController {
   @Get('users')
   async getUsers() {
     return await this.userRepository.find({
-      relations:{
+
+
+      // select: ['id', 'email'] 이렇게 특정 컬럼만 가져올 수도 있다, default는 모든 컬럼
+      select:{profile:{
+        id: true,
+      }},
+
+      // where: {id: 1} 이렇게 특정 조건을 줄 수도 있다
+      where:{},
+      relations: {
         profile: true,
-      }
+      },
+      order:{
+        id: 'ASC',
+        },
+        take: 10,
     });
   }
 
