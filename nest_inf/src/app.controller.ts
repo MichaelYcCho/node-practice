@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { In, LessThan, Not, Repository } from 'typeorm';
+import { ILike, In, LessThan, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from './entity/user.entity';
 import { ProfileModel } from './profile.entity';
@@ -151,6 +151,57 @@ export class AppController {
         posts: true,
       }
     });
+  }
+
+  @Post('sample')
+  async samle(){
+    // 모델에 해당되는 객체 생성 - 저장은 X
+    // const user1 = this.userRepository.create({
+    //   email: 'test@asdfasf.ai',
+    // });
+
+    // // 저장
+    // const user2 = await this.userRepository.save({
+    //   email: 'test@asdfasfd.ai'
+    // });
+    
+    // preload
+    //입력된 값을 기반으로 데이터베이스에 있는 데이터를 불러오고
+    // 추가 입력된 값으로 데이터베이스에서 가져온 값을들 대체함( 저장 X)
+    // const user3 = await this.userRepository.preload({
+    //   id: 1,
+    //   email: 'cvxzcv@Wzsdvzxcvai',
+    // });
+
+    // 삭제하기
+    // await this.userRepository.delete({
+    //   id: 1,
+    // });
+
+    // 감소 증가 (API 콜을 할때마다 증가하는 경우)
+    // await this.userRepository.increment({
+    //   id: 1,
+
+    // }, 'count', 1);
+    
+    //감을 감소
+    // await this.userRepository.decrement({
+    //   id: 1,
+    // }, 'count', 1);
+
+    // 개수 카운팅
+    // const count = await this.userRepository.count({
+    //   where:{
+    //     email: ILike('%@gmail.com'),
+
+    //   }
+    // });
+
+    // sum
+    // const sum = await this.userRepository.sum('count', {
+    //   email: ILike('%@gmail.com'),
+    // });
+
   }
 
 }
