@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsModel } from './entities/post.entity';
 import { Repository } from 'typeorm';
@@ -29,10 +29,25 @@ export class PostsService {
         return post;
     }
 
-
     async getAllPosts(){
-        // return this.postsRepository.find();
-        return [{title: 'title1', content: 'content1'}, {title: 'title2', content: 'content2'}];
+        return this.postsRepository.find({
+            relations: ['author']
+        });
+    }
+
+    async getPostById(postId: number){
+        const post = await this.postsRepository.findOne({
+            where: {
+                id: postId
+            },
+            relations: ['author']
+        });
+
+        if (!post){
+            throw new NotFoundException('Post not found');
+        }
+
+        return post;
     }
 
 }
