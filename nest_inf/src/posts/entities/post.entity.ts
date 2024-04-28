@@ -1,17 +1,21 @@
-import { UsersModel } from "src/users/entities/uesrs.entity";
+import { UsersModel } from "src/users/entities/users.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-
-
+ 
 @Entity()
-export class PostModel{
+export class PostsModel{
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    // @ManyToOne(() => UserModel, user => user.posts)
-    // author: UserModel;
-
     @Column()
     title: string;
+
+    @Column()
+    content: string;
+    
+    @ManyToOne(() => UsersModel, (user) => user.posts, {
+        nullable: false,
+    })
+    author: UsersModel;
 }
