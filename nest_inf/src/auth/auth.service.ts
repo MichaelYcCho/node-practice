@@ -62,5 +62,17 @@ export class AuthService {
         return this.loginUser(newUser);
     }
 
+    async extractTokenFromHeader(header: string, isBearer : boolean){
+        const splitToken = header.split(' ');
+        const prefix = isBearer ? 'Bearer' : 'Basic';
+
+        if(splitToken.length !== 2 || splitToken[0] !== prefix){
+            throw new UnauthorizedException('Invalid token prefix');
+        }
+
+        const token = splitToken[1];
+        return token;
+    }
+
 }
 
