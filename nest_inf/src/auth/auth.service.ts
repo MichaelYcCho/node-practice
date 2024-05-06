@@ -12,7 +12,7 @@ export class AuthService {
         private readonly usersService: UsersService,
     ){}
 
-    signToken(user: Pick<UsersModel, 'email' | 'id'>, isRefreshToken : boolean){
+    signToken(user: Pick<UsersModel, 'email' | 'id'>, isRefreshToken : boolean): string{
         const payload = {
             email: user.email,
             sub: user.id,
@@ -89,6 +89,22 @@ export class AuthService {
 
         return {email, password};
 
+    }
+
+    verifyToken(token: string){
+        return this.jwtService.verify(token, {
+            secret: JWT_SECRET,
+        });
+    }
+
+    rotateToken(token: string, isRefreshToken: boolean){
+        const decoded = this.verifyToken(token);
+     
+     
+        return this.signToken({
+            ...decoded, 
+            }, isRefreshToken
+        );
     }
 
 }

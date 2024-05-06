@@ -1,12 +1,23 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { access } from 'fs';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('token/access')
+  postTokenAccess(@Headers('authorization') rawToken: string) {
+    const token = this.authService.extractTokenFromHeader(rawToken, true);
+    const newToken = this.authService.rotateToken(token, false);
+    
+    return {
+      accessToken: newToken,
+    }
+  }
+
   @Post('login/email')
-  loginEmail(
+  postLoginEmail(
     @Headers('authorization') rawToken: string,
     ) {
       const token = this.authService.extractTokenFromHeader(rawToken, false);
@@ -15,7 +26,7 @@ export class AuthController {
   }
 
   @Post('register/email')
-  registerEmail(@Body('email') email: string, @Body('password') password: string, @Body('nickname') nickname: string) {
+  postRegisterEmail(@Body('email') email: string, @Body('password') password: string, @Body('nickname') nickname: string) {
     return this.authService.registerWithEmail({ email, password, nickname });
   }
 
