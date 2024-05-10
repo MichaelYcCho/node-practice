@@ -28,7 +28,7 @@ export class AuthController {
 
   @Post('register/email')
   postRegisterEmail(@Body('email') email: string, 
-  @Body('password', new MaxLengthPipe(8), new MinLengthPipe(3)) password: string,
+  @Body('password', new MaxLengthPipe(8, '비밀번호'), new MinLengthPipe(3)) password: string,
   @Body('nickname') nickname: string) {
     return this.authService.registerWithEmail(
       { 
