@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { AuthService } from "../auth.service";
 import { UsersService } from "src/users/users.service";
 
+@Injectable()
 export class BearerTokenGuard implements CanActivate {
     constructor(private readonly authService: AuthService,
         private readonly userService: UsersService
@@ -28,3 +29,33 @@ export class BearerTokenGuard implements CanActivate {
   }
 }
 
+@Injectable()
+export class AccessTokenGuard extends BearerTokenGuard {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        await super.canActivate(context);
+
+        const req = context.switchToHttp().getRequest();
+
+        if (req.tokenType !== 'access') {
+            throw new UnauthorizedException('접근 권한이 없습니다.');
+        }
+
+        return true;
+    }
+}
+
+
+@Injectable()
+export class RefreshTokenGuard extends BearerTokenGuard {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        await super.canActivate(context);
+
+        const req = context.switchToHttp().getRequest();
+
+        if (req.tokenType !== 'refresh') {
+            throw new UnauthorizedException('접근 권한이 없습니다.');
+        }
+
+        return true;
+    }
+}
