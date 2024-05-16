@@ -1,34 +1,21 @@
 import express, { Application, Request, Response } from 'express'
 import knex from 'knex'
+import Bull from "bull";
+import taskQueue from './queue';
 require('dotenv').config({path: './.env'});
 
 const app: Application = express()
 
 const port: number = 3000
 
-app.get('/main', (req: Request, res: Response) => {
+app.use(express.json());
 
-    const knex = require('knex')({ 
-        client: 'pg',
-        connection:{
-            host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
-            user:     process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            port:process.env.DB_PORT,
-        }})
-
-     knex.select('id').from('users').then((data: any) => {
-        console.log(data)
-
-    }
-    )
-    res.send('Hello World!')
-
-    
-   
-
-    })
+app.post('/add-job', async (req, res) => {
+    const { data, delay } = req.body;
+    const job = await taskQueue.add(data, { delay });
+    console.log({ jobId: job.id, status: 'Job added to queue with delay' })
+    res.json({ jobId: job.id, status: 'response' });
+  });
 
 
 app.listen(port, function () {
