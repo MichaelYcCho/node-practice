@@ -1,55 +1,57 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PostsModel } from './entities/post.entity';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { PostsModel } from './entities/post.entity'
+import { Repository } from 'typeorm'
+import { CreatePostDto } from './dto/create-post.dto'
 
 @Injectable()
 export class PostsService {
-    constructor(
-        @InjectRepository(PostsModel)
-        private postsRepository: Repository<PostsModel>,
-    ) {}
+  constructor(
+    @InjectRepository(PostsModel)
+    private postsRepository: Repository<PostsModel>,
+  ) {}
 
-    async createPost(authorId: number, title: string, content: string){
-        const post = this.postsRepository.create({author:{
-            id: authorId
-        }, title, content});
-        return {title, content};
+  async createPost(authorId: number, postDto: CreatePostDto) {
+    const post = this.postsRepository.create({
+      author: {
+        id: authorId,
+      },
+      ...postDto,
+    })
+    await this.postsRepository.save(post)
+    return post
+  }
+
+  async updatePost(postId: number, title: string, content: string) {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id: postId,
+      },
+    })
+    post.title = title
+    post.content = content
+    await this.postsRepository.save(post)
+    return post
+  }
+
+  async getAllPosts() {
+    return this.postsRepository.find({
+      relations: ['author'],
+    })
+  }
+
+  async getPostById(postId: number) {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id: postId,
+      },
+      relations: ['author'],
+    })
+
+    if (!post) {
+      throw new NotFoundException('Post not found')
     }
 
-    async updatePost(postId: number, title: string, content: string){
-        const post = await this.postsRepository.findOne({
-            where: {
-                id: postId
-            }
-        });
-        post.title = title;
-        post.content = content;
-        await this.postsRepository.save(post);
-        return post;
-    }
-
-    async getAllPosts(){
-        return this.postsRepository.find({
-            relations: ['author']
-        });
-    }
-
-    async getPostById(postId: number){
-        const post = await this.postsRepository.findOne({
-            where: {
-                id: postId
-            },
-            relations: ['author']
-        });
-
-        if (!post){
-            throw new NotFoundException('Post not found');
-        }
-
-        return post;
-    }
-
+    return post
+  }
 }
-
-
