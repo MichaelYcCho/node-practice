@@ -1,19 +1,20 @@
-import { BaseModel } from "src/common/entity/base.entity";
-import { UsersModel } from "src/users/entities/users.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { IsString } from 'class-validator'
+import { BaseModel } from 'src/common/entity/base.entity'
+import { UsersModel } from 'src/users/entities/users.entity'
+import { Column, Entity, ManyToOne } from 'typeorm'
 
- 
 @Entity()
-export class PostsModel extends BaseModel{
+export class PostsModel extends BaseModel {
+  @Column()
+  @IsString()
+  title: string
 
-    @Column()
-    title: string;
+  @Column()
+  @IsString()
+  content: string
 
-    @Column()
-    content: string;
-    
-    @ManyToOne(() => UsersModel, (user) => user.posts, {
-        nullable: false,
-    })
-    author: UsersModel;
+  @ManyToOne(() => UsersModel, (user) => user.posts, {
+    nullable: false,
+  })
+  author: UsersModel
 }
