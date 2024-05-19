@@ -1,30 +1,43 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { RolesEnum } from "../const/roles.const";
-import { PostsModel } from "src/posts/entities/post.entity";
-import { BaseModel } from "src/common/entity/base.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
+import { RolesEnum } from '../const/roles.const'
+import { PostsModel } from 'src/posts/entities/post.entity'
+import { BaseModel } from 'src/common/entity/base.entity'
+import { IsEmail, IsString, Length } from 'class-validator'
 
 @Entity()
-export class UsersModel extends BaseModel{
+export class UsersModel extends BaseModel {
+  @Column({
+    length: 20,
+    unique: true,
+  })
+  @IsString()
+  @Length(1, 20, { message: '닉네임은 1글자 이상 20글자 이하여야 합니다.' })
+  nickname: string
 
-    @Column({
-        length: 20,
-        unique: true
-    })
-    nickname: string;
+  @Column({ unique: true })
+  @IsString()
+  @IsEmail()
+  email: string
 
-    @Column({unique: true})
-    email: string;
+  @Column()
+  @IsString()
+  @Length(3, 8, { message: '비밀번호는 3글자 이상 8글자 이하여야 합니다.' })
+  password: string
 
-    @Column()
-    password: string;
+  @Column({
+    enum: Object.values(RolesEnum),
+    default: RolesEnum.USER,
+  })
+  role: RolesEnum
 
-    @Column({
-        enum: Object.values(RolesEnum),
-        default: RolesEnum.USER
-    })
-    role: RolesEnum;
-
-    @OneToMany(() => PostsModel, (post) => post.author)
-    posts: PostsModel[];
-
+  @OneToMany(() => PostsModel, (post) => post.author)
+  posts: PostsModel[]
 }
