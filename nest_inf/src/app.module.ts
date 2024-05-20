@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PostsModel } from './posts/entities/post.entity';
-import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
-import { UsersModel } from './users/entities/users.entity';
-import { AuthModule } from './auth/auth.module';
-
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { PostsModel } from './posts/entities/post.entity'
+import { UsersModule } from './users/users.module'
+import { PostsModule } from './posts/posts.module'
+import { UsersModel } from './users/entities/users.entity'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -18,7 +17,7 @@ import { AuthModule } from './auth/auth.module';
       username: 'postgres',
       password: 'postgres',
       database: 'boilerplate',
-      entities: [PostsModel, UsersModel ],
+      entities: [PostsModel, UsersModel],
       synchronize: true,
     }),
     UsersModule,
@@ -27,6 +26,5 @@ import { AuthModule } from './auth/auth.module';
   ],
   controllers: [AppController],
   providers: [AppService],
-
 })
 export class AppModule {}
