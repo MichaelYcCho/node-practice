@@ -43,6 +43,15 @@ export class PostsService {
         })
     }
 
+    async generatePosts(userId: number) {
+        for (let i = 0; i < 100; i++) {
+            await this.createPost(1, {
+                title: `Post ${i} title`,
+                content: `Post ${i} content`,
+            })
+        }
+    }
+
     async paginatePosts(dto: PaginatePostDto) {
         const posts = await this.postsRepository.find({
             where: {

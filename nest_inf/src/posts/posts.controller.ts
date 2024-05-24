@@ -29,6 +29,13 @@ export class PostsController {
         return this.postsService.paginatePosts(query)
     }
 
+    @Post()
+    @UseGuards(AccessTokenGuard)
+    async postPostsRandom(@getUser() user: UsersModel) {
+        await this.postsService.generatePosts(user.id)
+        return true
+    }
+
     @Get(':id')
     getPost(@Param('id', ParseIntPipe) id: string) {
         return this.postsService.getPostById(+id)
