@@ -63,8 +63,29 @@ export class PostsService {
             take: dto.take,
         })
 
+        // take보다 적은 데이터가 조회되면 마지막 페이지로 간주
+        const lastItem = posts.length > 0 && posts.length === dto.take ? posts[posts.length - 1] : null
+        const nextUrl = new URL('http://localhost/posts')
+
+        if (nextUrl) {
+            // dto의 키값들을 looping하면서 키값에 해당하는 value를 params에 추가
+            for (const key of Object.keys(dto)) {
+                if (dto[key]) {
+                    if (key !== 'where__id_moreThan') {
+                        nextUrl.searchParams.append(key, dto[key])
+                    }
+                }
+            }
+            nextUrl.searchParams.append('where__id_more_than', lastItem.id.toString())
+        }
+
         return {
             data: posts,
+            cursor: {
+                after: lastItem?.id ?? null,
+            },
+            count: posts.length,
+            next: nextUrl.toString() ?? null,
         }
     }
 
