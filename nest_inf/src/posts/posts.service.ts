@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { PostsModel } from './entities/post.entity'
-import { MoreThan, Repository } from 'typeorm'
+import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm'
 import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { PaginatePostDto } from './dto/paginate-post.dto'
@@ -53,10 +53,16 @@ export class PostsService {
     }
 
     async paginatePosts(dto: PaginatePostDto) {
+        const where: FindOptionsWhere<PostsModel> = {}
+
+        if (dto.where__id_lessThan) {
+            where.id = LessThan(dto.where__id_lessThan)
+        } else if (dto.where__id_moreThan) {
+            where.id = MoreThan(dto.where__id_moreThan)
+        }
+
         const posts = await this.postsRepository.find({
-            where: {
-                id: MoreThan(dto.where__id_moreThan),
-            },
+            where,
             order: {
                 createdAt: dto.order__createAt,
             },
@@ -76,7 +82,16 @@ export class PostsService {
                     }
                 }
             }
-            nextUrl.searchParams.append('where__id_more_than', lastItem.id.toString())
+
+            let key = null
+            if (dto.order__createAt === 'ASC') {
+                key = 'where__id_more_than'
+            } else {
+                key = 'where__id_less_than'
+            }
+            //let key = dto.order__createAt === 'ASC' ? 'where__id_moreThan' : 'where__id_lessThan'
+
+            nextUrl.searchParams.append(key, lastItem.id.toString())
         }
 
         return {

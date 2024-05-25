@@ -7,6 +7,11 @@ export class PaginatePostDto {
     @IsOptional()
     where__id_moreThan?: number
 
+    @Type(() => Number)
+    @IsNumber()
+    @IsOptional()
+    where__id_lessThan?: number
+
     @IsIn(['ASC', 'DESC'])
     order__createAt?: 'ASC' | 'DESC' = 'ASC'
 
