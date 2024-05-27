@@ -8,6 +8,7 @@ import { PostsModule } from './posts/posts.module'
 import { UsersModel } from './users/entities/users.entity'
 import { AuthModule } from './auth/auth.module'
 import { APP_INTERCEPTOR } from '@nestjs/core'
+import { CommonService } from './common/common.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
+    CommonService,
   ],
 })
 export class AppModule {}
