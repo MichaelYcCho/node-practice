@@ -186,9 +186,12 @@ export class CommonService {
             //     options[field] = FILTER_MAPPER[operator](value);
             // }
 
-            options[field] = FILTER_MAPPER[operator](value)
+            if (operator === 'i_like') {
+                options[field] = FILTER_MAPPER[operator](`%${value}%`)
+            } else {
+                options[field] = FILTER_MAPPER[operator](value)
+            }
         }
-
         return options
     }
 }
