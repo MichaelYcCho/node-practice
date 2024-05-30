@@ -18,12 +18,13 @@ export class PostsService {
         private configService: ConfigService,
     ) {}
 
-    async createPost(authorId: number, postDto: CreatePostDto) {
+    async createPost(authorId: number, postDto: CreatePostDto, image?: string) {
         const post = this.postsRepository.create({
             author: {
                 id: authorId,
             },
             ...postDto,
+            image: image,
         })
         await this.postsRepository.save(post)
         return post
