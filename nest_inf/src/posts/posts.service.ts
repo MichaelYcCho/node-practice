@@ -6,6 +6,8 @@ import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { PaginatePostDto } from './dto/paginate-post.dto'
 import { CommonService } from 'src/common/common.service'
+import { ConfigService } from '@nestjs/config'
+import { ENV_HOST_KEY, ENV_PROTOCOL_KEY } from 'src/common/const/env.const'
 
 @Injectable()
 export class PostsService {
@@ -13,6 +15,7 @@ export class PostsService {
         @InjectRepository(PostsModel)
         private postsRepository: Repository<PostsModel>,
         private commonService: CommonService,
+        private configService: ConfigService,
     ) {}
 
     async createPost(authorId: number, postDto: CreatePostDto) {
