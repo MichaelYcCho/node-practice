@@ -5,16 +5,21 @@ import { Column, Entity, ManyToOne } from 'typeorm'
 
 @Entity()
 export class PostsModel extends BaseModel {
-  @Column()
-  @IsString()
-  title: string
+    @Column()
+    @IsString()
+    title: string
 
-  @Column()
-  @IsString()
-  content: string
+    @Column()
+    @IsString()
+    content: string
 
-  @ManyToOne(() => UsersModel, (user) => user.posts, {
-    nullable: false,
-  })
-  author: UsersModel
+    @Column({
+        nullable: true,
+    })
+    image: string
+
+    @ManyToOne(() => UsersModel, (user) => user.posts, {
+        nullable: false,
+    })
+    author: UsersModel
 }
