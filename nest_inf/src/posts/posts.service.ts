@@ -11,19 +11,24 @@ import { ENV_HOST_KEY, ENV_PROTOCOL_KEY } from 'src/common/const/env.const'
 import { POST_IMAGE_PATH, PUBLIC_FOLDER_PATH } from 'src/common/const/path.const'
 import { basename, join } from 'path'
 import { promises } from 'fs'
+import { CreatePostImageDto } from './image/dto/create-image.dto'
+import { ImageModel } from 'src/common/entity/image.entity'
+import { DEFAULT_POST_FIND_OPTIONS } from './const/default-post-find-options.const'
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(PostsModel)
         private postsRepository: Repository<PostsModel>,
+        @InjectRepository(ImageModel)
+        private readonly imageRepository: Repository<ImageModel>,
         private commonService: CommonService,
         private configService: ConfigService,
     ) {}
 
-    async createPostImage(dto: CreatePostDto) {
+    async createPostImage(dto: CreatePostImageDto) {
         // dto 이미지 이름을 기반으로 파일경로 생성
-        const tempFilePath = join(PUBLIC_FOLDER_PATH, dto.image)
+        const tempFilePath = join(PUBLIC_FOLDER_PATH, dto.path)
 
         try {
             // 파일에 access 가능한지 확인
@@ -40,9 +45,13 @@ export class PostsService {
         // {프로젝트 경로}/public/posts/image.jpg
         const newPath = join(POST_IMAGE_PATH, fileName)
 
+        const result = await this.imageRepository.save({
+            ...dto,
+        })
+
         // 파일 옮기기
         await promises.rename(tempFilePath, newPath)
-        return true
+        return result
     }
 
     async createPost(authorId: number, postDto: CreatePostDto) {
@@ -51,6 +60,7 @@ export class PostsService {
                 id: authorId,
             },
             ...postDto,
+            images: [],
         })
         await this.postsRepository.save(post)
         return post
@@ -59,6 +69,7 @@ export class PostsService {
     async updatePost(postId: number, postDto: UpdatePostDto) {
         const { title, content } = postDto
         const post = await this.postsRepository.findOne({
+            ...DEFAULT_POST_FIND_OPTIONS,
             where: {
                 id: postId,
             },
@@ -80,12 +91,13 @@ export class PostsService {
             await this.createPost(1, {
                 title: `Post ${i} title`,
                 content: `Post ${i} content`,
+                images: [],
             })
         }
     }
 
     async paginatePosts(dto: PaginatePostDto) {
-        return this.commonService.paginate(dto, this.postsRepository, { relations: ['author'] }, 'posts')
+        return this.commonService.paginate(dto, this.postsRepository, { ...DEFAULT_POST_FIND_OPTIONS }, 'posts')
     }
 
     async getPostById(postId: number) {

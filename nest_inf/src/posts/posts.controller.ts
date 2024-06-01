@@ -21,6 +21,7 @@ import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { PaginatePostDto } from './dto/paginate-post.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { ImageModelType } from 'src/common/entity/image.entity'
 
 @Controller('posts')
 export class PostsController {
@@ -46,8 +47,17 @@ export class PostsController {
     @Post()
     @UseGuards(AccessTokenGuard)
     async postPosts(@getUser('id') userId: number, @Body() body: CreatePostDto) {
-        await this.postsService.createPostImage(body)
-        return this.postsService.createPost(userId, body)
+        const post = await this.postsService.createPost(userId, body)
+
+        for (let i = 0; i < body.images.length; i++) {
+            await this.postsService.createPostImage({
+                post,
+                order: i,
+                path: body.images[i],
+                type: ImageModelType.POST_IMAGE,
+            })
+        }
+        return this.postsService.getPostById(post.id)
     }
 
     @Patch(':id')
