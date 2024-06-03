@@ -23,11 +23,13 @@ import { PaginatePostDto } from './dto/paginate-post.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ImageModelType } from 'src/common/entity/image.entity'
 import { DataSource } from 'typeorm'
+import { PostsImagesService } from './image/images.service'
 
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
+        private readonly postsImagesService: PostsImagesService,
         private readonly dataSource: DataSource,
     ) {}
 
@@ -57,10 +59,10 @@ export class PostsController {
         await queryRunner.startTransaction()
 
         try {
-            const post = await this.postsService.createPost(userId, body)
+            const post = await this.postsService.createPost(userId, body, queryRunner)
 
             for (let i = 0; i < body.images.length; i++) {
-                await this.postsService.createPostImage({
+                await this.postsImagesService.createPostImage({
                     post,
                     order: i,
                     path: body.images[i],

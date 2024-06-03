@@ -26,44 +26,16 @@ export class PostsService {
         private configService: ConfigService,
     ) {}
 
-    async createPostImage(dto: CreatePostImageDto) {
-        // dto 이미지 이름을 기반으로 파일경로 생성
-        const tempFilePath = join(PUBLIC_FOLDER_PATH, dto.path)
-
-        try {
-            // 파일에 access 가능한지 확인
-            await promises.access(tempFilePath)
-        } catch (e) {
-            throw new Error('파일 access 실패')
-        }
-
-        // 파일 이름 추출
-        // ex) /public/image.jpg -> image.jpg
-        const fileName = basename(tempFilePath)
-
-        // 파일을 저장할 경로 생성
-        // {프로젝트 경로}/public/posts/image.jpg
-        const newPath = join(POST_IMAGE_PATH, fileName)
-
-        const result = await this.imageRepository.save({
-            ...dto,
-        })
-
-        // 파일 옮기기
-        await promises.rename(tempFilePath, newPath)
-        return result
-    }
-
     getRepository(queryRunner?: QueryRunner) {
         return queryRunner ? queryRunner.manager.getRepository(PostsModel) : this.postsRepository
     }
 
-    async createPost(authorId: number, postDto: CreatePostDto, queryRunner?: QueryRunner) {
+    async createPost(userId: number, postDto: CreatePostDto, queryRunner?: QueryRunner) {
         const repository = this.getRepository(queryRunner)
 
         const post = repository.create({
             author: {
-                id: authorId,
+                id: userId,
             },
             ...postDto,
             images: [],
