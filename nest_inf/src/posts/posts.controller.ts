@@ -22,10 +22,14 @@ import { UpdatePostDto } from './dto/update-post.dto'
 import { PaginatePostDto } from './dto/paginate-post.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ImageModelType } from 'src/common/entity/image.entity'
+import { DataSource } from 'typeorm'
 
 @Controller('posts')
 export class PostsController {
-    constructor(private readonly postsService: PostsService) {}
+    constructor(
+        private readonly postsService: PostsService,
+        private readonly dataSource: DataSource,
+    ) {}
 
     @Get()
     getPosts(@Query() query: PaginatePostDto) {
@@ -47,17 +51,30 @@ export class PostsController {
     @Post()
     @UseGuards(AccessTokenGuard)
     async postPosts(@getUser('id') userId: number, @Body() body: CreatePostDto) {
-        const post = await this.postsService.createPost(userId, body)
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        for (let i = 0; i < body.images.length; i++) {
-            await this.postsService.createPostImage({
-                post,
-                order: i,
-                path: body.images[i],
-                type: ImageModelType.POST_IMAGE,
-            })
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+
+        try {
+            const post = await this.postsService.createPost(userId, body)
+
+            for (let i = 0; i < body.images.length; i++) {
+                await this.postsService.createPostImage({
+                    post,
+                    order: i,
+                    path: body.images[i],
+                    type: ImageModelType.POST_IMAGE,
+                })
+            }
+            await queryRunner.commitTransaction()
+            return this.postsService.getPostById(post.id)
+        } catch (e) {
+            await queryRunner.rollbackTransaction()
+            throw e
+        } finally {
+            await queryRunner.release()
         }
-        return this.postsService.getPostById(post.id)
     }
 
     @Patch(':id')
