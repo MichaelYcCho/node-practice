@@ -24,6 +24,7 @@ export class TransactionInterceptor implements NestInterceptor {
         // 이 시점부터 같은 QueryRunner를 사용하면 트랜잭션 안에서 데이터베이스 액션을 실행
         await queryRunner.startTransaction()
 
+        // request에 queryRunner를 넣고 꺼내쓸 수 있도록 함
         req.queryRunner = queryRunner
 
         return next.handle().pipe(

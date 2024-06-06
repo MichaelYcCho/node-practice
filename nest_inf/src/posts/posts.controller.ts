@@ -22,8 +22,10 @@ import { UpdatePostDto } from './dto/update-post.dto'
 import { PaginatePostDto } from './dto/paginate-post.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ImageModelType } from 'src/common/entity/image.entity'
-import { DataSource } from 'typeorm'
+import { DataSource, QueryRunner } from 'typeorm'
 import { PostsImagesService } from './image/images.service'
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor'
+import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
 
 @Controller('posts')
 export class PostsController {
@@ -52,31 +54,24 @@ export class PostsController {
 
     @Post()
     @UseGuards(AccessTokenGuard)
-    async postPosts(@getUser('id') userId: number, @Body() body: CreatePostDto) {
-        const queryRunner = this.dataSource.createQueryRunner()
+    @UseInterceptors(TransactionInterceptor)
+    async postPosts(
+        @getUser('id') userId: number,
+        @Body() body: CreatePostDto,
+        @getQueryRunner() queryRunner: QueryRunner,
+    ) {
+        const post = await this.postsService.createPost(userId, body, queryRunner)
 
-        await queryRunner.connect()
-        await queryRunner.startTransaction()
-
-        try {
-            const post = await this.postsService.createPost(userId, body, queryRunner)
-
-            for (let i = 0; i < body.images.length; i++) {
-                await this.postsImagesService.createPostImage({
-                    post,
-                    order: i,
-                    path: body.images[i],
-                    type: ImageModelType.POST_IMAGE,
-                })
-            }
-            await queryRunner.commitTransaction()
-            return this.postsService.getPostById(post.id)
-        } catch (e) {
-            await queryRunner.rollbackTransaction()
-            throw e
-        } finally {
-            await queryRunner.release()
+        for (let i = 0; i < body.images.length; i++) {
+            await this.postsImagesService.createPostImage({
+                post,
+                order: i,
+                path: body.images[i],
+                type: ImageModelType.POST_IMAGE,
+            })
         }
+
+        return this.postsService.getPostById(post.id, queryRunner)
     }
 
     @Patch(':id')
