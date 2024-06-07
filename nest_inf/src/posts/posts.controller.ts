@@ -12,6 +12,7 @@ import {
     Query,
     UseInterceptors,
     UploadedFile,
+    UseFilters,
 } from '@nestjs/common'
 import { PostsService } from './posts.service'
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard'
@@ -26,6 +27,7 @@ import { DataSource, QueryRunner } from 'typeorm'
 import { PostsImagesService } from './image/images.service'
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor'
 import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
+import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter'
 
 @Controller('posts')
 export class PostsController {
@@ -55,6 +57,7 @@ export class PostsController {
     @Post()
     @UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
+    @UseFilters(HttpExceptionFilter)
     async postPosts(
         @getUser('id') userId: number,
         @Body() body: CreatePostDto,
