@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { PostsService } from './posts.service'
 import { PostsController } from './posts.controller'
-import { PostsModel } from './entities/post.entity'
+import { PostsModel } from './entity/post.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { UsersModule } from 'src/users/users.module'
 import { AuthModule } from 'src/auth/auth.module'
@@ -17,8 +17,9 @@ import { LogMiddleware } from 'src/common/middleware/log.middleware'
 })
 export class PostsModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
+        // posts/* 모든 요청에 대해 LogMiddleware를 적용합니다.
         consumer.apply(LogMiddleware).forRoutes({
-            path: 'posts',
+            path: 'posts*',
             method: RequestMethod.ALL,
         })
     }

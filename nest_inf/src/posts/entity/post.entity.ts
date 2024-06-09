@@ -1,11 +1,10 @@
-import { Transform } from 'class-transformer'
 import { IsString } from 'class-validator'
-import { join } from 'path'
-import { POST_PUBLIC_IMAGE_PATH } from 'src/common/const/path.const'
 import { BaseModel } from 'src/common/entity/base.entity'
 import { ImageModel } from 'src/common/entity/image.entity'
-import { UsersModel } from 'src/users/entities/users.entity'
+import { UsersModel } from 'src/users/entity/users.entity'
+
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm'
+import { CommentsModel } from '../comments/entity/comments.entity'
 
 @Entity()
 export class PostsModel extends BaseModel {
@@ -22,6 +21,15 @@ export class PostsModel extends BaseModel {
     })
     author: UsersModel
 
+    @Column()
+    likeCount: number
+
+    @Column()
+    commentCount: number
+
     @OneToMany(() => ImageModel, (image) => image.post)
     images: ImageModel[]
+
+    @OneToMany(() => CommentsModel, (comment) => comment.post)
+    comments: CommentsModel[]
 }
