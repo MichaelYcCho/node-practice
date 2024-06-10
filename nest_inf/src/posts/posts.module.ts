@@ -9,6 +9,7 @@ import { CommonModule } from 'src/common/common.module'
 import { ImageModel } from 'src/common/entity/image.entity'
 import { PostsImagesService } from './image/images.service'
 import { LogMiddleware } from 'src/common/middleware/log.middleware'
+import { CommentsModule } from './comments/comments.module'
 
 @Module({
     imports: [TypeOrmModule.forFeature([PostsModel, ImageModel]), AuthModule, UsersModule, CommonModule],
