@@ -93,4 +93,16 @@ export class PostsService {
 
         return post
     }
+
+    async incrementCommentCount(postId: number, queryRunner?: QueryRunner) {
+        const repository = this.getRepository(queryRunner)
+
+        await repository.increment(
+            {
+                id: postId,
+            },
+            'commentCount',
+            1,
+        )
+    }
 }

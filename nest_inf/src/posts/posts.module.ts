@@ -15,6 +15,7 @@ import { CommentsModule } from './comments/comments.module'
     imports: [TypeOrmModule.forFeature([PostsModel, ImageModel]), AuthModule, UsersModule, CommonModule],
     controllers: [PostsController],
     providers: [PostsService, PostsImagesService],
+    exports: [PostsService],
 })
 export class PostsModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

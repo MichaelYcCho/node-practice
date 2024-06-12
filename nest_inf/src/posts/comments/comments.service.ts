@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { CommentsModel } from './entity/comments.entity'
 import { QueryRunner, Repository } from 'typeorm'
 import { DEFAULT_COMMENT_FIND_OPTIONS } from './const/default-comment-find-options.const'
+import { CreateCommentsDto } from './dto/create-comments.dto'
+import { UsersModel } from 'src/users/entity/users.entity'
 
 @Injectable()
 export class CommentsService {
@@ -46,5 +48,17 @@ export class CommentsService {
         }
 
         return comment
+    }
+
+    async createComment(dto: CreateCommentsDto, postId: number, author: UsersModel, queryRunner?: QueryRunner) {
+        const repository = this.getRepository(queryRunner)
+
+        return repository.save({
+            ...dto,
+            post: {
+                id: postId,
+            },
+            author,
+        })
     }
 }
