@@ -15,6 +15,7 @@ import { PUBLIC_FOLDER_PATH } from './common/const/path.const'
 import { ImageModel } from './common/entity/image.entity'
 import { CommentsModule } from './posts/comments/comments.module'
 import { CommentsModel } from './posts/comments/entity/comments.entity'
+import { ChatsModule } from './chats/chats.module'
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { CommentsModel } from './posts/comments/entity/comments.entity'
         PostsModule,
         AuthModule,
         CommentsModule,
+        ChatsModule,
     ],
     controllers: [AppController],
     providers: [
