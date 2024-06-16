@@ -7,6 +7,7 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
+import { ChatsService } from './chats.service'
 
 @WebSocketGateway({
     namespace: 'chats', // -> ws://localhost:3000/chats
@@ -16,11 +17,18 @@ import { Server, Socket } from 'socket.io'
     },
 })
 export class ChatsGateway implements OnGatewayConnection {
+    constructor(private readonly chatsService: ChatsService) {}
+
     @WebSocketServer()
     server: Server
 
     handleConnection(socket: Socket) {
         console.log(`on connection: ${socket.id}`)
+    }
+
+    @SubscribeMessage('create_chat')
+    async createChat(@MessageBody() data: { chatId: number; userIds: number[] }, @ConnectedSocket() socket: Socket) {
+        const chat = await this.chatsService.createChat(data)
     }
 
     @SubscribeMessage('enter_chat')

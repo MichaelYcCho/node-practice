@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/users.service'
 import * as bcrypt from 'bcrypt'
 import { RegisterUserDto } from './dto/register-user.dto'
 import { ConfigService } from '@nestjs/config'
+import { ENV_HASH_ROUNDS_KEY } from 'src/common/const/env.const'
 
 @Injectable()
 export class AuthService {
@@ -54,11 +55,13 @@ export class AuthService {
     }
 
     async registerWithEmail(user: RegisterUserDto) {
-        const hash = await bcrypt.hash(user.password, this.configService.get<number>('HASH_ROUNDS'))
+        const hash = await bcrypt.hash(user.password, parseInt(this.configService.get<string>(ENV_HASH_ROUNDS_KEY)))
+
         const newUser = await this.usersService.createUser({
             ...user,
             password: hash,
         })
+
         return this.loginUser(newUser)
     }
 

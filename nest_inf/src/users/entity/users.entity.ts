@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm'
 import { RolesEnum } from '../const/roles.const'
 
 import { BaseModel } from 'src/common/entity/base.entity'
@@ -9,6 +9,7 @@ import { emailValidationMessage } from 'src/common/validation-message/src/common
 import { Exclude, Expose } from 'class-transformer'
 import { PostsModel } from 'src/posts/entity/post.entity'
 import { CommentsModel } from 'src/posts/comments/entity/comments.entity'
+import { ChatsModel } from 'src/chats/entity/chats.entity'
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -49,4 +50,8 @@ export class UsersModel extends BaseModel {
     get nicknameAndEmail() {
         return `${this.nickname} ${this.email}`
     }
+
+    @ManyToMany(() => ChatsModel, (chat) => chat.users)
+    @JoinTable()
+    chats: ChatsModel[]
 }
