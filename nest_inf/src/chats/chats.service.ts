@@ -4,6 +4,7 @@ import { ChatsModel } from './entity/chats.entity'
 import { Repository } from 'typeorm'
 import { CommonService } from 'src/common/common.service'
 import { CreateChatDto } from './dto/create-chat.dto'
+import { PaginateChatDto } from './dto/paginate-chat.dto'
 
 @Injectable()
 export class ChatsService {
@@ -12,6 +13,19 @@ export class ChatsService {
         private readonly chatsRepository: Repository<ChatsModel>,
         private readonly commonService: CommonService,
     ) {}
+
+    paginateChats(dto: PaginateChatDto) {
+        return this.commonService.paginate(
+            dto,
+            this.chatsRepository,
+            {
+                relations: {
+                    users: true,
+                },
+            },
+            'chats',
+        )
+    }
 
     async createChat(dto: CreateChatDto) {
         const chat = await this.chatsRepository.save({
