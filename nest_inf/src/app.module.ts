@@ -17,6 +17,7 @@ import { CommentsModule } from './posts/comments/comments.module'
 import { CommentsModel } from './posts/comments/entity/comments.entity'
 import { ChatsModule } from './chats/chats.module'
 import { ChatsModel } from './chats/entity/chats.entity'
+import { MessagesModel } from './chats/messages/entity/messages.entity'
 
 @Module({
     imports: [
@@ -37,7 +38,7 @@ import { ChatsModel } from './chats/entity/chats.entity'
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            entities: [PostsModel, UsersModel, ImageModel, CommentsModel, ChatsModel],
+            entities: [PostsModel, UsersModel, ImageModel, CommentsModel, ChatsModel, MessagesModel],
             synchronize: true,
         }),
         UsersModule,

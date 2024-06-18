@@ -10,6 +10,8 @@ import {
 import { Server, Socket } from 'socket.io'
 import { ChatsService } from './chats.service'
 import { EnterChatDto } from './dto/enter-chat.dto'
+import { CreateMessagesDto } from './messages/dto/create-messages.dto'
+import { ChatsMessagesService } from './messages/messages.service'
 
 @WebSocketGateway({
     namespace: 'chats', // -> ws://localhost:3000/chats
@@ -19,7 +21,10 @@ import { EnterChatDto } from './dto/enter-chat.dto'
     },
 })
 export class ChatsGateway implements OnGatewayConnection {
-    constructor(private readonly chatsService: ChatsService) {}
+    constructor(
+        private readonly chatsService: ChatsService,
+        private readonly messagesService: ChatsMessagesService,
+    ) {}
 
     @WebSocketServer()
     server: Server
@@ -51,8 +56,16 @@ export class ChatsGateway implements OnGatewayConnection {
     }
     // socket.on('send_message', 'hello')
     @SubscribeMessage('send_message')
-    sendMessage(@MessageBody() message: { message: string; chatId: number }, @ConnectedSocket() socket: Socket) {
-        socket.to(message.chatId.toString()).emit('receive_message', message)
-        // this.server.in(message.chatId.toString()).emit('receive_message', message)
+    async sendMessage(@MessageBody() dto: CreateMessagesDto, @ConnectedSocket() socket: Socket) {
+        const chatExists = await this.chatsService.checkIfChatExists(dto.chatId)
+
+        if (!chatExists) {
+            throw new WsException(`존재하지 않는 채팅방입니다. Chat ID : ${dto.chatId}`)
+        }
+
+        const message = await this.messagesService.createMessage(dto)
+
+        socket.to(message.chat.id.toString()).emit('receive_message', message.message)
+        // this.server.in(message.chatId.toString()).emit('receive_message', message.message);
     }
 }
