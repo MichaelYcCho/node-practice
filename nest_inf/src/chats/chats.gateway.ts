@@ -12,6 +12,7 @@ import { ChatsService } from './chats.service'
 import { EnterChatDto } from './dto/enter-chat.dto'
 import { CreateMessagesDto } from './messages/dto/create-messages.dto'
 import { ChatsMessagesService } from './messages/messages.service'
+import { UsePipes, ValidationPipe } from '@nestjs/common'
 
 @WebSocketGateway({
     namespace: 'chats', // -> ws://localhost:3000/chats
@@ -33,11 +34,31 @@ export class ChatsGateway implements OnGatewayConnection {
         console.log(`on connection: ${socket.id}`)
     }
 
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            transformOptions: {
+                enableImplicitConversion: true,
+            },
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    )
     @SubscribeMessage('create_chat')
     async createChat(@MessageBody() data: { chatId: number; userIds: number[] }, @ConnectedSocket() socket: Socket) {
         const chat = await this.chatsService.createChat(data)
     }
 
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            transformOptions: {
+                enableImplicitConversion: true,
+            },
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    )
     @SubscribeMessage('enter_chat')
     // 접속할 방의 id를 받는다
     async enterChat(@MessageBody() data: EnterChatDto, @ConnectedSocket() socket: Socket) {
@@ -54,7 +75,18 @@ export class ChatsGateway implements OnGatewayConnection {
 
         socket.join(data.chatIds.map((x) => x.toString()))
     }
+
     // socket.on('send_message', 'hello')
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            transformOptions: {
+                enableImplicitConversion: true,
+            },
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    )
     @SubscribeMessage('send_message')
     async sendMessage(@MessageBody() dto: CreateMessagesDto, @ConnectedSocket() socket: Socket) {
         const chatExists = await this.chatsService.checkIfChatExists(dto.chatId)
