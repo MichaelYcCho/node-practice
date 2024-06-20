@@ -12,7 +12,10 @@ import { ChatsService } from './chats.service'
 import { EnterChatDto } from './dto/enter-chat.dto'
 import { CreateMessagesDto } from './messages/dto/create-messages.dto'
 import { ChatsMessagesService } from './messages/messages.service'
-import { UsePipes, ValidationPipe } from '@nestjs/common'
+import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common'
+import { SocketCatchHttpExceptionFilter } from 'src/common/exception-filter/socket-catch-http.exception-filter'
+import { SocketBearerTokenGuard } from 'src/auth/guard/socket/socket-bearer-token.guard'
+import { UsersModel } from 'src/users/entity/users.entity'
 
 @WebSocketGateway({
     namespace: 'chats', // -> ws://localhost:3000/chats
@@ -44,6 +47,8 @@ export class ChatsGateway implements OnGatewayConnection {
             forbidNonWhitelisted: true,
         }),
     )
+    @UseFilters(SocketCatchHttpExceptionFilter)
+    @UseGuards(SocketBearerTokenGuard)
     @SubscribeMessage('create_chat')
     async createChat(@MessageBody() data: { chatId: number; userIds: number[] }, @ConnectedSocket() socket: Socket) {
         const chat = await this.chatsService.createChat(data)
@@ -87,15 +92,16 @@ export class ChatsGateway implements OnGatewayConnection {
             forbidNonWhitelisted: true,
         }),
     )
+    @UseFilters(SocketCatchHttpExceptionFilter)
     @SubscribeMessage('send_message')
-    async sendMessage(@MessageBody() dto: CreateMessagesDto, @ConnectedSocket() socket: Socket) {
+    async sendMessage(@MessageBody() dto: CreateMessagesDto, @ConnectedSocket() socket: Socket & { user: UsersModel }) {
         const chatExists = await this.chatsService.checkIfChatExists(dto.chatId)
 
         if (!chatExists) {
             throw new WsException(`존재하지 않는 채팅방입니다. Chat ID : ${dto.chatId}`)
         }
 
-        const message = await this.messagesService.createMessage(dto)
+        const message = await this.messagesService.createMessage(dto, socket.user.id)
 
         socket.to(message.chat.id.toString()).emit('receive_message', message.message)
         // this.server.in(message.chatId.toString()).emit('receive_message', message.message);
