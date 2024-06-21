@@ -32,7 +32,12 @@ export class UsersModel extends BaseModel {
     @Column()
     @IsString()
     @Length(3, 8, { message: stringValidationMessage })
-    @Exclude()
+    @Exclude({
+        // 보내는 응답에는 password를 포함시키지 않음
+        toPlainOnly: true,
+        // 받는 요청에는 password를 포함시키지 않음
+        //toClassOnly: true,
+    })
     password: string
 
     @Column({
