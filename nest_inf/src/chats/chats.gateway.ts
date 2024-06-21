@@ -2,6 +2,8 @@ import {
     ConnectedSocket,
     MessageBody,
     OnGatewayConnection,
+    OnGatewayDisconnect,
+    OnGatewayInit,
     SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
@@ -26,7 +28,7 @@ import { AuthService } from 'src/auth/auth.service'
         credentials: true,
     },
 })
-export class ChatsGateway implements OnGatewayConnection {
+export class ChatsGateway implements OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect {
     constructor(
         private readonly chatsService: ChatsService,
         private readonly messagesService: ChatsMessagesService,
@@ -36,6 +38,16 @@ export class ChatsGateway implements OnGatewayConnection {
 
     @WebSocketServer()
     server: Server
+
+    afterInit(server: any) {
+        // 서버 inject시, gateway가 초기화되면 호출되는 메서드
+        console.log(`after gateway init`)
+    }
+
+    handleDisconnect(socket: Socket) {
+        // socket 연결이 끊어지면 호출되는 메서드
+        console.log(`on disconnect called : ${socket.id}`)
+    }
 
     async handleConnection(socket: Socket & { user: UsersModel }) {
         console.log(`on connect called : ${socket.id}`)
