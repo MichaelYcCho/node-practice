@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseInterceptors } from '@nestjs/common'
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common'
 import { CommentsService } from './comments.service'
 import { PaginateCommentsDto } from './dto/paginate-comments.dto'
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor'
@@ -8,6 +19,8 @@ import { getUser } from 'src/users/decorator/user.decorator'
 import { QueryRunner } from 'typeorm'
 import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
 import { PostsService } from '../posts.service'
+import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard'
+import { UpdateCommentsDto } from './dto/update-comments.dto'
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -39,5 +52,11 @@ export class CommentsController {
         await this.postsService.incrementCommentCount(postId, queryRunner)
 
         return resp
+    }
+
+    @Patch(':commentId')
+    @UseGuards(AccessTokenGuard)
+    async patchComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body: UpdateCommentsDto) {
+        return this.commentsService.updateComment(body, commentId)
     }
 }
