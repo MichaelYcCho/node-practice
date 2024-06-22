@@ -83,4 +83,22 @@ export class CommentsService {
 
         return newComment
     }
+
+    async deleteComment(id: number, qr?: QueryRunner) {
+        const repository = this.getRepository(qr)
+
+        const comment = await repository.findOne({
+            where: {
+                id,
+            },
+        })
+
+        if (!comment) {
+            throw new BadRequestException('존재하지 않는 댓글입니다.')
+        }
+
+        await repository.delete(id)
+
+        return id
+    }
 }

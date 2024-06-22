@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     ParseIntPipe,
@@ -58,5 +59,20 @@ export class CommentsController {
     @UseGuards(AccessTokenGuard)
     async patchComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body: UpdateCommentsDto) {
         return this.commentsService.updateComment(body, commentId)
+    }
+
+    @Delete(':commentId')
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(TransactionInterceptor)
+    async deleteComment(
+        @Param('commentId', ParseIntPipe) commentId: number,
+        @Param('postId', ParseIntPipe) postId: number,
+        @getQueryRunner() queryRunner: QueryRunner,
+    ) {
+        const resp = await this.commentsService.deleteComment(commentId, queryRunner)
+
+        await this.postsService.decrementCommentCount(postId, queryRunner)
+
+        return resp
     }
 }
