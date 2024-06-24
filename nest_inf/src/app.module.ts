@@ -7,7 +7,7 @@ import { UsersModule } from './users/users.module'
 import { PostsModule } from './posts/posts.module'
 import { UsersModel } from './users/entity/users.entity'
 import { AuthModule } from './auth/auth.module'
-import { APP_INTERCEPTOR } from '@nestjs/core'
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { CommonService } from './common/common.service'
 import { ConfigModule } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -18,6 +18,7 @@ import { CommentsModel } from './posts/comments/entity/comments.entity'
 import { ChatsModule } from './chats/chats.module'
 import { ChatsModel } from './chats/entity/chats.entity'
 import { MessagesModel } from './chats/messages/entity/messages.entity'
+import { RolesGuard } from './users/guard/roles.guard'
 
 @Module({
     imports: [
@@ -54,7 +55,10 @@ import { MessagesModel } from './chats/messages/entity/messages.entity'
             provide: APP_INTERCEPTOR,
             useClass: ClassSerializerInterceptor,
         },
-        CommonService,
+        {
+            provide: APP_GUARD,
+            useClass: RolesGuard,
+        },
     ],
 })
 export class AppModule {}

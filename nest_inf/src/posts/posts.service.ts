@@ -58,6 +58,22 @@ export class PostsService {
         return post
     }
 
+    async deletePost(postId: number) {
+        const post = await this.postsRepository.findOne({
+            where: {
+                id: postId,
+            },
+        })
+
+        if (!post) {
+            throw new NotFoundException()
+        }
+
+        await this.postsRepository.delete(postId)
+
+        return postId
+    }
+
     async getAllPosts() {
         return this.postsRepository.find({
             relations: ['author'],

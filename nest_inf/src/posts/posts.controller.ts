@@ -13,6 +13,7 @@ import {
     UseInterceptors,
     UploadedFile,
     UseFilters,
+    Delete,
 } from '@nestjs/common'
 import { PostsService } from './posts.service'
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard'
@@ -28,6 +29,8 @@ import { PostsImagesService } from './image/images.service'
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor'
 import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
 import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter'
+import { Roles } from 'src/users/decorator/roles.decorator'
+import { RolesEnum } from 'src/users/const/roles.const'
 
 @Controller('posts')
 export class PostsController {
@@ -80,5 +83,13 @@ export class PostsController {
     @Patch(':id')
     patchPost(@Param('id') id: string, @Body() body: UpdatePostDto) {
         return this.postsService.updatePost(+id, body)
+    }
+
+    // 5) DELETE /posts/:id
+    //    id에 해당되는 POST를 삭제한다.
+    @Delete(':id')
+    @Roles(RolesEnum.ADMIN)
+    deletePost(@Param('id', ParseIntPipe) id: number) {
+        return this.postsService.deletePost(id)
     }
 }
