@@ -1,61 +1,79 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { AuthService } from "../auth.service";
-import { UsersService } from "src/users/users.service";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
+import { AuthService } from '../auth.service'
+import { UsersService } from 'src/users/users.service'
+import { Reflector } from '@nestjs/core'
+import { IS_PUBLIC_KEY } from 'src/common/decorator/is-public.decorator'
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
-    constructor(private readonly authService: AuthService,
-        private readonly userService: UsersService
+    constructor(
+        private readonly authService: AuthService,
+        private readonly userService: UsersService,
+        private readonly reflector: Reflector,
     ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean>{
-    const req = context.switchToHttp().getRequest();
-    const rawToken = req.headers['authorization'];
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()])
 
-    if(!rawToken) {
-      throw new UnauthorizedException('토큰이 없습니다.');
+        const req = context.switchToHttp().getRequest()
+
+        if (isPublic) {
+            req.isRoutePublic = true
+            return true
+        }
+
+        const rawToken = req.headers['authorization']
+
+        if (!rawToken) {
+            throw new UnauthorizedException('토큰이 없습니다.')
+        }
+
+        const token = this.authService.extractTokenFromHeader(rawToken, true)
+        const result = await this.authService.verifyToken(token)
+
+        const user = await this.userService.getUserByEmail(result.email)
+        req.token = token
+        req.tokenType = result.type
+        req.user = user
+
+        return true
     }
-
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
-    const result = await this.authService.verifyToken(token);
-
-    const user = await this.userService.getUserByEmail(result.email);
-    req.token = token;
-    req.tokenType = result.type;
-    req.user = user;
-
-    return true;
-
-  }
 }
 
 @Injectable()
 export class AccessTokenGuard extends BearerTokenGuard {
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        await super.canActivate(context);
+        await super.canActivate(context)
 
-        const req = context.switchToHttp().getRequest();
+        const req = context.switchToHttp().getRequest()
 
-        if (req.tokenType !== 'access') {
-            throw new UnauthorizedException('접근 권한이 없습니다.');
+        if (req.isRoutePublic) {
+            return true
         }
 
-        return true;
+        if (req.tokenType !== 'access') {
+            throw new UnauthorizedException('접근 권한이 없습니다.')
+        }
+
+        return true
     }
 }
-
 
 @Injectable()
 export class RefreshTokenGuard extends BearerTokenGuard {
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        await super.canActivate(context);
+        await super.canActivate(context)
 
-        const req = context.switchToHttp().getRequest();
+        const req = context.switchToHttp().getRequest()
 
-        if (req.tokenType !== 'refresh') {
-            throw new UnauthorizedException('접근 권한이 없습니다.');
+        if (req.isRoutePublic) {
+            return true
         }
 
-        return true;
+        if (req.tokenType !== 'refresh') {
+            throw new UnauthorizedException('접근 권한이 없습니다.')
+        }
+
+        return true
     }
 }

@@ -19,6 +19,7 @@ import { ChatsModule } from './chats/chats.module'
 import { ChatsModel } from './chats/entity/chats.entity'
 import { MessagesModel } from './chats/messages/entity/messages.entity'
 import { RolesGuard } from './users/guard/roles.guard'
+import { AccessTokenGuard } from './auth/guard/bearer-token.guard'
 
 @Module({
     imports: [
@@ -54,6 +55,10 @@ import { RolesGuard } from './users/guard/roles.guard'
         {
             provide: APP_INTERCEPTOR,
             useClass: ClassSerializerInterceptor,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AccessTokenGuard,
         },
         {
             provide: APP_GUARD,

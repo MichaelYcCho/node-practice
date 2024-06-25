@@ -31,6 +31,7 @@ import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
 import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter'
 import { Roles } from 'src/users/decorator/roles.decorator'
 import { RolesEnum } from 'src/users/const/roles.const'
+import { IsPublic } from 'src/common/decorator/is-public.decorator'
 
 @Controller('posts')
 export class PostsController {
@@ -41,24 +42,26 @@ export class PostsController {
     ) {}
 
     @Get()
+    @IsPublic()
     getPosts(@Query() query: PaginatePostDto) {
         return this.postsService.paginatePosts(query)
     }
 
     @Post()
-    @UseGuards(AccessTokenGuard)
+    //@UseGuards(AccessTokenGuard)
     async postPostsRandom(@getUser() user: UsersModel) {
         await this.postsService.generatePosts(user.id)
         return true
     }
 
     @Get(':id')
+    @IsPublic()
     getPost(@Param('id', ParseIntPipe) id: string) {
         return this.postsService.getPostById(+id)
     }
 
     @Post()
-    @UseGuards(AccessTokenGuard)
+    //@UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     @UseFilters(HttpExceptionFilter)
     async postPosts(

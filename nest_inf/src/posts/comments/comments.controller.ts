@@ -22,6 +22,7 @@ import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
 import { PostsService } from '../posts.service'
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard'
 import { UpdateCommentsDto } from './dto/update-comments.dto'
+import { IsPublic } from 'src/common/decorator/is-public.decorator'
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -31,11 +32,13 @@ export class CommentsController {
     ) {}
 
     @Get()
+    @IsPublic()
     getComments(@Param('postId', ParseIntPipe) postId: number, @Query() query: PaginateCommentsDto) {
         return this.commentsService.paginateComments(query, postId)
     }
 
     @Get(':commentId')
+    @IsPublic()
     getComment(@Param('commentId', ParseIntPipe) commentId: number) {
         return this.commentsService.getCommentById(commentId)
     }
@@ -56,13 +59,13 @@ export class CommentsController {
     }
 
     @Patch(':commentId')
-    @UseGuards(AccessTokenGuard)
+    //@UseGuards(AccessTokenGuard)
     async patchComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body: UpdateCommentsDto) {
         return this.commentsService.updateComment(body, commentId)
     }
 
     @Delete(':commentId')
-    @UseGuards(AccessTokenGuard)
+    //@UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     async deleteComment(
         @Param('commentId', ParseIntPipe) commentId: number,
