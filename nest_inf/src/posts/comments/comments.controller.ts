@@ -23,6 +23,7 @@ import { PostsService } from '../posts.service'
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard'
 import { UpdateCommentsDto } from './dto/update-comments.dto'
 import { IsPublic } from 'src/common/decorator/is-public.decorator'
+import { IsCommentMineOrAdminGuard } from './guard/is-comment-mine-or-admin.guard'
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
@@ -59,12 +60,14 @@ export class CommentsController {
     }
 
     @Patch(':commentId')
+    @UseGuards(IsCommentMineOrAdminGuard)
     //@UseGuards(AccessTokenGuard)
     async patchComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() body: UpdateCommentsDto) {
         return this.commentsService.updateComment(body, commentId)
     }
 
     @Delete(':commentId')
+    @UseGuards(IsCommentMineOrAdminGuard)
     //@UseGuards(AccessTokenGuard)
     @UseInterceptors(TransactionInterceptor)
     async deleteComment(
