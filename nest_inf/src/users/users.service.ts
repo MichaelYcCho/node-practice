@@ -1,14 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { In, Repository } from 'typeorm'
+import { In, QueryRunner, Repository } from 'typeorm'
 import { UsersModel } from './entity/users.entity'
 import { InjectRepository } from '@nestjs/typeorm'
+import { UserFollowersModel } from './entity/user-followers.entity'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(UsersModel)
         private usersRepository: Repository<UsersModel>,
+        @InjectRepository(UserFollowersModel)
+        private readonly userFollowersRepository: Repository<UserFollowersModel>,
     ) {}
+
+    getUsersRepository(queryRunner?: QueryRunner) {
+        return queryRunner ? queryRunner.manager.getRepository<UsersModel>(UsersModel) : this.usersRepository
+    }
+
+    getUserFollowRepository(queryRunner?: QueryRunner) {
+        return queryRunner
+            ? queryRunner.manager.getRepository<UserFollowersModel>(UserFollowersModel)
+            : this.userFollowersRepository
+    }
 
     async createUser(user: Pick<UsersModel, 'email' | 'nickname' | 'password'>) {
         const nickNameExists = await this.usersRepository.findOne({
@@ -51,5 +64,59 @@ export class UsersService {
                 email,
             },
         })
+    }
+
+    async followUser(followerId: number, followeeId: number, qr?: QueryRunner) {
+        const userFollowersRepository = this.getUserFollowRepository(qr)
+
+        await userFollowersRepository.save({
+            follower: {
+                id: followerId,
+            },
+            followee: {
+                id: followeeId,
+            },
+        })
+
+        return true
+    }
+
+    async getFollowers(userId: number, includeNotConfirmed: boolean) {
+        /**
+         * [
+         *  {
+         *      id: number;
+         *      follower: UsersModel;
+         *      followee: UsersModel;
+         *      isConfirmed: boolean;
+         *      createdAt: Date;
+         *      updatedAt: Date;
+         *  }
+         * ]
+         */
+        const where = {
+            followee: {
+                id: userId,
+            },
+        }
+
+        if (!includeNotConfirmed) {
+            where['isConfirmed'] = true
+        }
+
+        const result = await this.userFollowersRepository.find({
+            where,
+            relations: {
+                follower: true,
+                followee: true,
+            },
+        })
+
+        return result.map((x) => ({
+            id: x.follower.id,
+            nickname: x.follower.nickname,
+            email: x.follower.email,
+            isConfirmed: x.isConfirmed,
+        }))
     }
 }

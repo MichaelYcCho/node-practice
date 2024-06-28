@@ -20,6 +20,7 @@ import { ChatsModel } from './chats/entity/chats.entity'
 import { MessagesModel } from './chats/messages/entity/messages.entity'
 import { RolesGuard } from './users/guard/roles.guard'
 import { AccessTokenGuard } from './auth/guard/bearer-token.guard'
+import { UserFollowersModel } from './users/entity/user-followers.entity'
 
 @Module({
     imports: [
@@ -40,7 +41,15 @@ import { AccessTokenGuard } from './auth/guard/bearer-token.guard'
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            entities: [PostsModel, UsersModel, ImageModel, CommentsModel, ChatsModel, MessagesModel],
+            entities: [
+                PostsModel,
+                UsersModel,
+                ImageModel,
+                CommentsModel,
+                ChatsModel,
+                MessagesModel,
+                UserFollowersModel,
+            ],
             synchronize: true,
         }),
         UsersModule,
