@@ -7,6 +7,7 @@ import {
     Param,
     ParseBoolPipe,
     ParseIntPipe,
+    Patch,
     Post,
     UseInterceptors,
 } from '@nestjs/common'
@@ -16,6 +17,8 @@ import { RolesEnum } from './const/roles.const'
 import { UsersModel } from './entity/users.entity'
 import { getUser } from './decorator/user.decorator'
 import { getQueryRunner } from 'src/common/decorator/query-runner.decorator'
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor'
+import { QueryRunner } from 'typeorm'
 
 @Controller('users')
 export class UsersController {
@@ -39,6 +42,17 @@ export class UsersController {
     async postFollow(@getUser() user: UsersModel, @Param('id', ParseIntPipe) followeeId: number) {
         await this.usersService.followUser(user.id, followeeId)
 
+        return true
+    }
+
+    @Patch('follow/:id/confirm')
+    @UseInterceptors(TransactionInterceptor)
+    async patchFollowConfirm(
+        @getUser() user: UsersModel,
+        @Param('id', ParseIntPipe) followerId: number,
+        @getQueryRunner() queryRunner: QueryRunner,
+    ) {
+        await this.usersService.confirmFollow(followerId, user.id, queryRunner)
         return true
     }
 }

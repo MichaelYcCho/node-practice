@@ -119,4 +119,34 @@ export class UsersService {
             isConfirmed: x.isConfirmed,
         }))
     }
+
+    async confirmFollow(followerId: number, followeeId: number, queryRunner?: QueryRunner) {
+        const userFollowersRepository = this.getUserFollowRepository(queryRunner)
+
+        const existing = await userFollowersRepository.findOne({
+            where: {
+                follower: {
+                    id: followerId,
+                },
+                followee: {
+                    id: followeeId,
+                },
+            },
+            relations: {
+                follower: true,
+                followee: true,
+            },
+        })
+
+        if (!existing) {
+            throw new BadRequestException('존재하지 않는 팔로우 요청입니다.')
+        }
+
+        await userFollowersRepository.save({
+            ...existing,
+            isConfirmed: true,
+        })
+
+        return true
+    }
 }
