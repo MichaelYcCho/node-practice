@@ -3,6 +3,7 @@ import {
     ClassSerializerInterceptor,
     Controller,
     DefaultValuePipe,
+    Delete,
     Get,
     Param,
     ParseBoolPipe,
@@ -53,6 +54,18 @@ export class UsersController {
         @getQueryRunner() queryRunner: QueryRunner,
     ) {
         await this.usersService.confirmFollow(followerId, user.id, queryRunner)
+        return true
+    }
+
+    @Delete('follow/:id')
+    @UseInterceptors(TransactionInterceptor)
+    async deleteFollow(
+        @getUser() user: UsersModel,
+        @Param('id', ParseIntPipe) followeeId: number,
+        @getQueryRunner() queryRunner: QueryRunner,
+    ) {
+        await this.usersService.deleteFollow(user.id, followeeId, qr)
+
         return true
     }
 }
