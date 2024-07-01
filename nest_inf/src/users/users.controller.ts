@@ -54,6 +54,8 @@ export class UsersController {
         @getQueryRunner() queryRunner: QueryRunner,
     ) {
         await this.usersService.confirmFollow(followerId, user.id, queryRunner)
+        await this.usersService.incrementFollowerCount(user.id, queryRunner)
+        await this.usersService.incrementFolloweeCount(followerId, queryRunner)
         return true
     }
 
@@ -64,7 +66,9 @@ export class UsersController {
         @Param('id', ParseIntPipe) followeeId: number,
         @getQueryRunner() queryRunner: QueryRunner,
     ) {
-        await this.usersService.deleteFollow(user.id, followeeId, qr)
+        await this.usersService.deleteFollow(user.id, followeeId, queryRunner)
+        await this.usersService.decrementFollowerCount(followeeId, queryRunner)
+        await this.usersService.decrementFolloweeCount(user.id, queryRunner)
 
         return true
     }

@@ -66,8 +66,8 @@ export class UsersService {
         })
     }
 
-    async followUser(followerId: number, followeeId: number, qr?: QueryRunner) {
-        const userFollowersRepository = this.getUserFollowRepository(qr)
+    async followUser(followerId: number, followeeId: number, queryRunner?: QueryRunner) {
+        const userFollowersRepository = this.getUserFollowRepository(queryRunner)
 
         await userFollowersRepository.save({
             follower: {
@@ -163,5 +163,53 @@ export class UsersService {
         })
 
         return true
+    }
+
+    async incrementFollowerCount(userId: number, queryRunner?: QueryRunner) {
+        const userRepository = this.getUsersRepository(queryRunner)
+
+        await userRepository.increment(
+            {
+                id: userId,
+            },
+            'followerCount',
+            1,
+        )
+    }
+
+    async decrementFollowerCount(userId: number, queryRunner?: QueryRunner) {
+        const userRepository = this.getUsersRepository(queryRunner)
+
+        await userRepository.decrement(
+            {
+                id: userId,
+            },
+            'followerCount',
+            1,
+        )
+    }
+
+    async incrementFolloweeCount(userId: number, qr?: QueryRunner) {
+        const userRepository = this.getUsersRepository(qr)
+
+        await userRepository.increment(
+            {
+                id: userId,
+            },
+            'followeeCount',
+            1,
+        )
+    }
+
+    async decrementFolloweeCount(userId: number, queryRunner?: QueryRunner) {
+        const userRepository = this.getUsersRepository(queryRunner)
+
+        await userRepository.decrement(
+            {
+                id: userId,
+            },
+            'followeeCount',
+            1,
+        )
     }
 }
