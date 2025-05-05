@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
+import { CreateJobDto } from './dto/create-job.dto';
+import { JobStatusDto } from './dto/job-status.dto';
 
 @Injectable()
 export class BatchService {
@@ -9,7 +11,7 @@ export class BatchService {
   ) {}
 
   // 작업을 큐에 추가하는 메서드
-  async addSampleJob(data: any): Promise<any> {
+  async addSampleJob(data: CreateJobDto): Promise<any> {
     return this.sampleQueue.add('sample-job', data, {
       attempts: 3, // 재시도 횟수
       removeOnComplete: true, // 완료 후 작업 제거
@@ -18,10 +20,10 @@ export class BatchService {
   }
 
   // 작업 상태 조회 메서드
-  async getJobStatus(jobId: string): Promise<any> {
+  async getJobStatus(jobId: string): Promise<JobStatusDto> {
     const job = await this.sampleQueue.getJob(jobId);
     if (!job) {
-      return { status: 'not_found' };
+      throw new NotFoundException(`작업 ID ${jobId}를 찾을 수 없습니다.`);
     }
 
     const state = await job.getState();
@@ -37,7 +39,7 @@ export class BatchService {
   }
 
   // 모든 대기 중인 작업 가져오기
-  async getAllJobs(): Promise<any> {
+  async getAllJobs(): Promise<JobStatusDto[]> {
     const jobs = await this.sampleQueue.getJobs([
       'waiting',
       'active',
@@ -52,6 +54,7 @@ export class BatchService {
         : job.failedReason
           ? 'failed'
           : 'pending',
+      progress: 0, // 기본값 설정
       data: job.data,
       createdAt: job.timestamp,
     }));
