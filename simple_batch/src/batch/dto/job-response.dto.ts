@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class JobResponseDto {
   @ApiProperty({
     description: '작업 ID',
-    example: '1621354987452',
+    example: 1621354987452,
   })
-  jobId: string;
+  jobId: string | number;
 
   @ApiProperty({
     description: '상태 메시지',

@@ -20,7 +20,7 @@ export class BatchService {
   }
 
   // 작업 상태 조회 메서드
-  async getJobStatus(jobId: string): Promise<JobStatusDto> {
+  async getJobStatus(jobId: string | number): Promise<JobStatusDto> {
     const job = await this.sampleQueue.getJob(jobId);
     if (!job) {
       throw new NotFoundException(`작업 ID ${jobId}를 찾을 수 없습니다.`);
@@ -47,16 +47,20 @@ export class BatchService {
       'failed',
       'completed',
     ]);
-    return jobs.map((job) => ({
-      id: job.id,
-      state: job.finishedOn
-        ? 'completed'
-        : job.failedReason
-          ? 'failed'
-          : 'pending',
-      progress: 0, // 기본값 설정
-      data: job.data,
-      createdAt: job.timestamp,
-    }));
+
+    return jobs.map((job) => {
+      const jobData: JobStatusDto = {
+        id: job.id,
+        state: job.finishedOn
+          ? 'completed'
+          : job.failedReason
+            ? 'failed'
+            : 'pending',
+        progress: 0, // 기본값 설정
+        data: job.data,
+        createdAt: job.timestamp,
+      };
+      return jobData;
+    });
   }
 }

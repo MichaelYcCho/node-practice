@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class JobStatusDto {
   @ApiProperty({
     description: '작업 ID',
-    example: '1621354987452',
+    example: 1621354987452,
   })
-  id: string;
+  id: string | number;
 
   @ApiProperty({
     description: '작업 상태',
@@ -31,6 +31,7 @@ export class JobStatusDto {
   @ApiProperty({
     description: '작업 생성 시간',
     example: '2025-05-07T12:34:56.789Z',
+    type: 'number',
   })
-  createdAt: Date;
+  createdAt: number | Date;
 }

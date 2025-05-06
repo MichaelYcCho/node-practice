@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { BatchService } from './batch.service';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -34,7 +41,9 @@ export class BatchController {
     description: '작업을 찾을 수 없음',
   })
   @Get('job/:id')
-  async getJobStatus(@Param('id') id: string): Promise<JobStatusDto> {
+  async getJobStatus(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<JobStatusDto> {
     return this.batchService.getJobStatus(id);
   }
 
